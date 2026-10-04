@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text('Hello ren!')
+          child: Tile('A', HitType.partial),
         )
       ),
     );
@@ -28,6 +28,24 @@ class Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        color: switch (hitType) {
+          HitType.hit => Colors.green,
+          HitType.partial => Colors.yellow,
+          HitType.miss => Colors.grey,
+          _ => Colors.white,
+        },
+      ),
+      child: Center(
+        child:Text(
+          letter.toUpperCase(),
+          style: Theme.of(context).textTheme.titleLarge
+        )
+      )
+    );
   }
 }
