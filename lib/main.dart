@@ -26,6 +26,37 @@ class MainApp extends StatelessWidget {
   }
 }
 
+class GamePage extends StatelessWidget {
+  GamePage({super.key});
+
+  final Game _game = Game();
+
+  @override
+  Widget build(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        spacing:5.0,
+        children:[
+          for (final guess in _game.guesses)
+            Row(
+              spacing: 5.0,
+              children: [
+                for (final letter in guess)
+                  Tile(letter.char, letter.type)
+              ],
+            ),
+          GuessInput(
+            onSubmitGuess: (guess) {
+              print(guess);
+            }
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class Tile extends StatelessWidget {
   const Tile(this.letter, this.hitType, {super.key});
 
@@ -56,28 +87,49 @@ class Tile extends StatelessWidget {
   }
 }
 
-class GamePage extends StatelessWidget {
-  GamePage({super.key});
+class GuessInput extends StatelessWidget{
+  GuessInput({super.key, required this.onSubmitGuess});
 
-  final Game _game = Game();
+  final void Function(String) onSubmitGuess;
+
+  final TextEditingController _textEditingController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context){
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        spacing:5.0,
-        children:[
-          for (final guess in _game.guesses)
-            Row(
-              spacing: 5.0,
-              children: [
-                for (final letter in guess)
-                  Tile(letter.char, letter.type)
-              ],
-            )
-        ]
-      )
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              maxLength: 5,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(35)),
+                )
+              ),
+              controller: _textEditingController,
+              autofocus: true,
+              focusNode: _focusNode,
+              onSubmitted: (input) {
+                onSubmitGuess(_textEditingController.text.trim());
+                _textEditingController.clear();
+                _focusNode.requestFocus();
+              }
+            ),
+          ),
+        ),
+        IconButton(
+          padding: EdgeInsets.zero,
+          icon: const Icon(Icons.arrow_circle_up),
+          onPressed: () {
+            onSubmitGuess(_textEditingController.text.trim());
+            _textEditingController.clear();
+            _focusNode.requestFocus();
+          },
+        ),
+      ],
     );
   }
 }
